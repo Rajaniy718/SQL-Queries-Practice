@@ -1,14 +1,23 @@
 /**********************************************************************/
-/* SQL Queries: Practice your SQL Knowledge! */
+/* SQL Queries */
 /**********************************************************************/
 
 /**********************************************************************/
 /* Credit to Schema : https://github.com/AndrejPHP/w3schools-database */
 /**********************************************************************/
-/* Run w3schools.sql to set up database, tables and data*/
+/* Run GenerateMoviesDatabase.sql to set up database, tables and data*/
 
 /*
 ----Schema----
+Film
+Director
+Country
+Certificate
+Genre
+Language
+Studio
+Cast
+Actor
 Customers (CustomerID, CustomerName, ContactName, Address, City, PostalCode, Country)
 Categories (CategoryID,CategoryName, Description)
 Employees (EmployeeID, LastName, FirstName, BirthDate, Photo, Notes)
@@ -20,17 +29,20 @@ Shippers (ShipperID, ShipperName, Phone)
 
 /**** Advanced Level *****/
 
-/*1. Select customer name together with each order the customer made*/
-SELECT CustomerName, OrderID
-FROM customers c
-JOIN orders o
-ON c.CustomerID = o.CustomerID;
+--1. Select director name together with each film the director made*/
 
-/*2. Select order id together with name of employee who handled the order*/
-SELECT o.OrderID, e.EmployeeID, e.FirstName, e.LastName
-FROM orders o
-JOIN employees e
-ON o.EmployeeID = e.EmployeeID;
+select DirectorName, [dbo].[tblFilm].FilmName
+from [dbo].[tblDirector]
+join [dbo].[tblFilm]
+on [dbo].[tblDirector].DirectorID = [dbo].[tblFilm].FilmDirectorID;
+
+/*2. Select Film id together with name of director who made the film*/
+
+select [dbo].[tblFilm].FilmID , [dbo].[tblDirector].DirectorName
+from [dbo].[tblFilm]
+join [dbo].[tblDirector]
+on [dbo].[tblDirector].DirectorID = [dbo].[tblFilm].FilmDirectorID
+order by [dbo].[tblFilm].FilmID;
 
 /*3. Select customers who did not placed any order yet*/
 SELECT c.CustomerID, c.CustomerName, o.OrderID
