@@ -44,25 +44,51 @@ join [dbo].[tblDirector]
 on [dbo].[tblDirector].DirectorID = [dbo].[tblFilm].FilmDirectorID
 order by [dbo].[tblFilm].FilmID;
 
-/*3. Select customers who did not placed any order yet*/
-SELECT c.CustomerID, c.CustomerName, o.OrderID
-FROM customers c
-LEFT JOIN orders o
-ON c.CustomerID = o.CustomerID
-WHERE o.CustomerID IS NULL;
+/*3. Select director who did not win any oscar yet for all the films he/she made*/
 
-/*4. Select order id together with the name of products*/
-SELECT o.OrderID, p.ProductID, p.ProductName
-FROM orders o
-JOIN order_details od ON o.OrderID = od.OrderID
-JOIN products p ON p.ProductID = od.ProductID
-ORDER BY o.OrderID;
+select [dbo].[tblDirector].DirectorName,count(FilmOscarWins) as Total_oscar_wins, FilmName
+from [dbo].[tblFilm]
+left join [dbo].[tblDirector]
+on [dbo].[tblDirector].DirectorID = [dbo].[tblFilm].FilmDirectorID
+group by DirectorName, FilmOscarWins, FilmName
+having count(FilmOscarWins) = 0
 
-/*5. Select products that no one bought*/
-SELECT p.ProductID, p.ProductName, od.OrderID
-FROM products p
-LEFT JOIN order_details od ON p.ProductID = od.ProductID
-WHERE od.OrderID IS NULL;
+/*4. Select Certificate together with the name of Directors*/
+
+select distinct([dbo].[tblDirector].DirectorName), tblCertificate.Certificate 
+from [dbo].[tblFilm]
+join [dbo].[tblCertificate]
+on [dbo].[tblCertificate].CertificateID = [dbo].[tblFilm].FilmCertificateID
+join [dbo].[tblDirector]
+on [dbo].[tblDirector].DirectorID = [dbo].[tblFilm].FilmDirectorID
+group by tblCertificate.Certificate, [dbo].[tblDirector].DirectorName
+order by [dbo].[tblDirector].DirectorName 
+
+/*4a. Select Director together with the No certificate value*/
+
+select [dbo].[tblDirector].DirectorName, tblCertificate.Certificate,  tblCertificate.CertificateID
+from [dbo].[tblFilm]
+left join [dbo].[tblCertificate]
+on [dbo].[tblCertificate].CertificateID = [dbo].[tblFilm].FilmCertificateID
+join [dbo].[tblDirector]
+on [dbo].[tblDirector].DirectorID = [dbo].[tblFilm].FilmDirectorID
+where tblCertificate.Certificate IS NULL
+group by  [dbo].[tblDirector].DirectorName, tblCertificate.CertificateID, tblCertificate.Certificate
+order by [dbo].[tblDirector].DirectorName 
+
+/*5. Select Films that does not make any box office and No value for Film budget*/
+
+select [dbo].[tblFilm].FilmName , FilmBoxOfficeDollars ,FilmBudgetDollars
+from [dbo].[tblFilm]
+where FilmBoxOfficeDollars IS NULL AND FilmBudgetDollars IS NOT NULL
+order by [dbo].[tblFilm].FilmName
+
+/*5a. Select Films that does not make any box office*/
+
+select [dbo].[tblFilm].FilmName , FilmBoxOfficeDollars ,FilmBudgetDollars
+from [dbo].[tblFilm]
+where FilmBoxOfficeDollars IS NULL
+order by [dbo].[tblFilm].FilmName
 
 /*6. Select customer together with the products that he bought*/
 SELECT c.CustomerID, c.CustomerName, p.ProductName
