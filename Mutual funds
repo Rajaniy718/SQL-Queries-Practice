@@ -1,0 +1,19 @@
+The summary statistics to perform for each of the columns in the dataset would depend on the type of data each column contains. 
+Here's a general guideline for which summary statistics to calculate for different types of data:
+
+Categorical Columns (e.g., scheme_name, fund_manager, amc_name, rating, category, sub_category, risk_level):
+
+Count: Count of unique categories or values.
+Mode: Most frequently occurring category or value.
+Frequency distribution: A table showing the count or percentage of each category.
+
+Numeric Columns (e.g., min_sip, min_lumpsum, expense_ratio, fund_size_cr, fund_age_yr, alpha, sd, beta, sharpe, returns_1yr, returns_3yr, returns_5yr):
+
+Mean (Average): To understand the central tendency.
+Median: To identify the middle value.
+Standard Deviation: To measure the spread or dispersion.
+Minimum and Maximum: To identify the range of values.
+Quartiles (25th and 75th percentiles): To understand data distribution and identify outliers.
+Percentiles (e.g., 10th, 90th): To examine specific percentiles if needed.
+Skewness and Kurtosis: To assess the shape and symmetry of the distribution.
+Count (Number of non-null values): To check for missing data.
