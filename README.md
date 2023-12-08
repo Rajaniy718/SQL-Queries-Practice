@@ -1,7 +1,7 @@
 # SQL Queries Practise sets
 
 1.Queries based on Movies data.
-   Movies Data: 
-   
+2. Mutual Fund Analysis : Return analysis
+           
 
 
