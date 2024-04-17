@@ -1,0 +1,708 @@
+Question 1: Table: Products
++-------------+---------+
+| Column Name | Type    |
++-------------+---------+
+| product_id  | int     |
+| low_fats    | enum    |
+| recyclable  | enum    |
++-------------+---------+
+product_id is the primary key (column with unique values) for this table.
+low_fats is an ENUM (category) of type ('Y', 'N') where 'Y' means this product is low fat and 'N' means it is not.
+recyclable is an ENUM (category) of types ('Y', 'N') where 'Y' means this product is recyclable and 'N' means it is not.
+ 
+Write a solution to find the ids of products that are both low fat and recyclable.Return the result table in any order.
+
+Solution :
+Select product_id
+from Products
+where low_fats ='Y' and recyclable = 'Y'
+
+**********************************************************
+Question 2: Table: Customer
+
++-------------+---------+
+| Column Name | Type    |
++-------------+---------+
+| id          | int     |
+| name        | varchar |
+| referee_id  | int     |
++-------------+---------+
+In SQL, id is the primary key column for this table.
+Each row of this table indicates the id of a customer, their name, and the id of the customer who referred them.
+ 
+Find the names of the customer that are not referred by the customer with id = 2.Return the result table in any order.
+
+Solution: 
+Select name
+From customer
+Where referee_id != 2 OR referee_id IS NULL
+
+**************************************************************
+Question 3: Table: World
+
++-------------+---------+
+| Column Name | Type    |
++-------------+---------+
+| name        | varchar |
+| continent   | varchar |
+| area        | int     |
+| population  | int     |
+| gdp         | bigint  |
++-------------+---------+
+name is the primary key (column with unique values) for this table.
+Each row of this table gives information about the name of a country, the continent to which it belongs, its area, the population, and its GDP value.
+A country is big if:
+it has an area of at least three million (i.e., 3000000 km2), or
+it has a population of at least twenty-five million (i.e., 25000000).
+
+Write a solution to find the name, population, and area of the big countries.Return the result table in any order.
+
+Solution: 
+Select name, population, area
+from World
+where area >= 3000000 
+OR population >= 25000000
+
+************************************************************************
+Question 4: Table: Views
+
++---------------+---------+
+| Column Name   | Type    |
++---------------+---------+
+| article_id    | int     |
+| author_id     | int     |
+| viewer_id     | int     |
+| view_date     | date    |
++---------------+---------+
+There is no primary key (column with unique values) for this table, the table may have duplicate rows.
+Each row of this table indicates that some viewer viewed an article (written by some author) on some date. 
+Note that equal author_id and viewer_id indicate the same person.
+ 
+Write a solution to find all the authors that viewed at least one of their own articles.Return the result table sorted by id in ascending order.
+
+Solution:
+Select distinct author_id as id
+from Views
+where author_id = viewer_id 
+order by author_id
+
+*************************************************************************
+Question 5: Table: Tweets
+
++----------------+---------+
+| Column Name    | Type    |
++----------------+---------+
+| tweet_id       | int     |
+| content        | varchar |
++----------------+---------+
+tweet_id is the primary key (column with unique values) for this table.
+This table contains all the tweets in a social media app.
+ 
+
+Write a solution to find the IDs of the invalid tweets. The tweet is invalid if the number of characters used in the content of the tweet is strictly greater than 15.
+
+Return the result table in any order.
+
+Solution: 
+select tweet_id
+from Tweets
+where length(content) >15
+************************************************************************
+Question 6: Table: Employees
+
++---------------+---------+
+| Column Name   | Type    |
++---------------+---------+
+| id            | int     |
+| name          | varchar |
++---------------+---------+
+id is the primary key (column with unique values) for this table.
+Each row of this table contains the id and the name of an employee in a company.
+ 
+Table: EmployeeUNI
+
++---------------+---------+
+| Column Name   | Type    |
++---------------+---------+
+| id            | int     |
+| unique_id     | int     |
++---------------+---------+
+(id, unique_id) is the primary key (combination of columns with unique values) for this table.
+Each row of this table contains the id and the corresponding unique id of an employee in the company.
+ 
+Write a solution to show the unique ID of each user, If a user does not have a unique ID replace just show null.Return the result table in any order.
+
+Solution:
+select empu.unique_id, emp.name
+from employees as emp
+left join employeeUNI as empu
+on emp.id = empu.id
+
+***************************************************************
+Question 7: Table: Sales
+
++-------------+-------+
+| Column Name | Type  |
++-------------+-------+
+| sale_id     | int   |
+| product_id  | int   |
+| year        | int   |
+| quantity    | int   |
+| price       | int   |
++-------------+-------+
+(sale_id, year) is the primary key (combination of columns with unique values) of this table.
+product_id is a foreign key (reference column) to Product table.
+Each row of this table shows a sale on the product product_id in a certain year.
+Note that the price is per unit.
+ 
+Table: Product
+
++--------------+---------+
+| Column Name  | Type    |
++--------------+---------+
+| product_id   | int     |
+| product_name | varchar |
++--------------+---------+
+product_id is the primary key (column with unique values) of this table.
+Each row of this table indicates the product name of each product.
+ 
+Write a solution to report the product_name, year, and price for each sale_id in the Sales table.Return the resulting table in any order.
+
+Solution:
+select product_name, year, price 
+from Sales S
+left join Product P
+on S.product_id = P.product_id
+
+******************************************************************
+Question 8: Table: Visits
+
++-------------+---------+
+| Column Name | Type    |
++-------------+---------+
+| visit_id    | int     |
+| customer_id | int     |
++-------------+---------+
+visit_id is the column with unique values for this table.
+This table contains information about the customers who visited the mall.
+ 
+Table: Transactions
+
++----------------+---------+
+| Column Name    | Type    |
++----------------+---------+
+| transaction_id | int     |
+| visit_id       | int     |
+| amount         | int     |
++----------------+---------+
+transaction_id is column with unique values for this table.
+This table contains information about the transactions made during the visit_id.
+ 
+Write a solution to find the IDs of the users who visited without making any transactions and the number of times they made these types of visits.Return the result table sorted in any order.
+
+Solution: 
+select customer_id, count(V.visit_id) as count_no_trans
+from Visits as V
+left join Transactions as T
+on  V.visit_id = T.visit_id
+where T.transaction_id IS NULL
+group by V.customer_id
+
+********************************************************************
+Question 9: Table: Weather
+
++---------------+---------+
+| Column Name   | Type    |
++---------------+---------+
+| id            | int     |
+| recordDate    | date    |
+| temperature   | int     |
++---------------+---------+
+id is the column with unique values for this table.
+There are no different rows with the same recordDate.
+This table contains information about the temperature on a certain day.
+ 
+Write a solution to find all dates' Id with higher temperatures compared to its previous dates (yesterday).Return the result table in any order.
+
+Solution:
+Select W1.id as Id 
+from Weather W
+join Weather W1
+on DATEDIFF(W.recordDate, W1.recordDate) = -1
+where W1.temperature > W.temperature
+
+************************************************************************
+Question 10: Table: Activity
+
++----------------+---------+
+| Column Name    | Type    |
++----------------+---------+
+| machine_id     | int     |
+| process_id     | int     |
+| activity_type  | enum    |
+| timestamp      | float   |
++----------------+---------+
+The table shows the user activities for a factory website.
+(machine_id, process_id, activity_type) is the primary key (combination of columns with unique values) of this table.
+machine_id is the ID of a machine.
+process_id is the ID of a process running on the machine with ID machine_id.
+activity_type is an ENUM (category) of type ('start', 'end').
+timestamp is a float representing the current time in seconds.
+'start' means the machine starts the process at the given timestamp and 'end' means the machine ends the process at the given timestamp.
+The 'start' timestamp will always be before the 'end' timestamp for every (machine_id, process_id) pair.
+ 
+There is a factory website that has several machines each running the same number of processes. Write a solution to find the average time each machine takes to complete a process.
+The time to complete a process is the 'end' timestamp minus the 'start' timestamp. The average time is calculated by the total time to complete every process on the machine divided by the number of 
+processes that were run.
+
+The resulting table should have the machine_id along with the average time as processing_time, which should be rounded to 3 decimal places.Return the result table in any order.
+
+Solution:
+SELECT 
+    s.machine_id, 
+    ROUND(AVG(e.timestamp-s.timestamp),3) as processing_time 
+FROM Activity s
+JOIN Activity e ON e.machine_id=s.machine_id
+WHERE s.activity_type='start' AND e.activity_type='end'
+GROUP BY s.machine_id
+
+****************************************************************************
+Question 11: Table: Employee
+
++-------------+---------+
+| Column Name | Type    |
++-------------+---------+
+| empId       | int     |
+| name        | varchar |
+| supervisor  | int     |
+| salary      | int     |
++-------------+---------+
+empId is the column with unique values for this table.
+Each row of this table indicates the name and the ID of an employee in addition to their salary and the id of their manager.
+ 
+Table: Bonus
+
++-------------+------+
+| Column Name | Type |
++-------------+------+
+| empId       | int  |
+| bonus       | int  |
++-------------+------+
+empId is the column of unique values for this table.
+empId is a foreign key (reference column) to empId from the Employee table.
+Each row of this table contains the id of an employee and their respective bonus.
+ 
+Write a solution to report the name and bonus amount of each employee with a bonus less than 1000.Return the result table in any order.
+
+Solution: 
+select e.name, b.bonus
+from Employee e
+left join Bonus b
+on e.empId = b.empId
+where b.bonus < 1000 or b.bonus is NULL
+
+********************************************************************
+Question12: Table: Students
+
++---------------+---------+
+| Column Name   | Type    |
++---------------+---------+
+| student_id    | int     |
+| student_name  | varchar |
++---------------+---------+
+student_id is the primary key (column with unique values) for this table.
+Each row of this table contains the ID and the name of one student in the school.
+ 
+Table: Subjects
+
++--------------+---------+
+| Column Name  | Type    |
++--------------+---------+
+| subject_name | varchar |
++--------------+---------+
+subject_name is the primary key (column with unique values) for this table.
+Each row of this table contains the name of one subject in the school.
+ 
+Table: Examinations
+
++--------------+---------+
+| Column Name  | Type    |
++--------------+---------+
+| student_id   | int     |
+| subject_name | varchar |
++--------------+---------+
+There is no primary key (column with unique values) for this table. It may contain duplicates.
+Each student from the Students table takes every course from the Subjects table.
+Each row of this table indicates that a student with ID student_id attended the exam of subject_name.
+ 
+Write a solution to find the number of times each student attended each exam.Return the result table ordered by student_id and subject_name.
+
+Solution:
+SELECT
+    Students.student_id, 
+    Students.student_name, 
+    Subjects.subject_name, 
+    IFNULL(Grouped_Exams.number, 0) attended_exams
+FROM 
+    Students
+CROSS JOIN
+    Subjects
+LEFT JOIN
+    (
+        SELECT 
+            student_id,
+            subject_name,
+            COUNT(*) number
+        FROM
+            Examinations
+        GROUP BY
+            student_id,
+            subject_name
+    ) Grouped_Exams
+    ON 
+        Grouped_Exams.student_id = Students.student_id AND
+        Grouped_Exams.subject_name = Subjects.subject_name
+ORDER BY
+    Students.student_id,
+    Subjects.subject_name 
+
+***************************************************************************************
+Question 13: Table: Employee
+
++-------------+---------+
+| Column Name | Type    |
++-------------+---------+
+| id          | int     |
+| name        | varchar |
+| department  | varchar |
+| managerId   | int     |
++-------------+---------+
+id is the primary key (column with unique values) for this table.
+Each row of this table indicates the name of an employee, their department, and the id of their manager.
+If managerId is null, then the employee does not have a manager.
+No employee will be the manager of themself.
+ 
+Write a solution to find managers with at least five direct reports.Return the result table in any order.
+
+Solution:
+select e1.name
+from Employee e1
+join Employee e2
+on e1.id = e2.managerId
+group by e1.id,e1.name
+having count(Distinct e2.id) >= 5
+
+**********************************************************************************************
+Question 14: Table: Signups
+
++----------------+----------+
+| Column Name    | Type     |
++----------------+----------+
+| user_id        | int      |
+| time_stamp     | datetime |
++----------------+----------+
+user_id is the column of unique values for this table.
+Each row contains information about the signup time for the user with ID user_id.
+ 
+Table: Confirmations
+
++----------------+----------+
+| Column Name    | Type     |
++----------------+----------+
+| user_id        | int      |
+| time_stamp     | datetime |
+| action         | ENUM     |
++----------------+----------+
+(user_id, time_stamp) is the primary key (combination of columns with unique values) for this table.
+user_id is a foreign key (reference column) to the Signups table.
+action is an ENUM (category) of the type ('confirmed', 'timeout')
+Each row of this table indicates that the user with ID user_id requested a confirmation message at time_stamp and that confirmation message was either confirmed ('confirmed') 
+or expired without confirming ('timeout').
+ 
+The confirmation rate of a user is the number of 'confirmed' messages divided by the total number of requested confirmation messages.
+The confirmation rate of a user that did not request any confirmation messages is 0. Round the confirmation rate to two decimal places.
+Write a solution to find the confirmation rate of each user.Return the result table in any order.
+
+Solution: 
+select S.user_id, 
+ROUND((AVG(CASE
+          WHEN action='confirmed' THEN 1
+          ELSE 0
+          END)),2) as confirmation_rate
+from Signups S
+left join Confirmations C
+on S.user_id = C.user_id
+group by S.user_id
+
+**********************************************************************
+Question 15: Table: Cinema
+
++----------------+----------+
+| Column Name    | Type     |
++----------------+----------+
+| id             | int      |
+| movie          | varchar  |
+| description    | varchar  |
+| rating         | float    |
++----------------+----------+
+id is the primary key (column with unique values) for this table.
+Each row contains information about the name of a movie, its genre, and its rating.
+rating is a 2 decimal places float in the range [0, 10]
+ 
+Write a solution to report the movies with an odd-numbered ID and a description that is not "boring".Return the result table ordered by rating in descending order.
+
+Solution: 
+Select id, movie, description, rating
+from Cinema
+where description NOT IN ('boring')
+        AND (ID % 2) <> 0
+order by rating desc
+
+***************************************************************************
+Question 16: Table: Prices
+
++---------------+---------+
+| Column Name   | Type    |
++---------------+---------+
+| product_id    | int     |
+| start_date    | date    |
+| end_date      | date    |
+| price         | int     |
++---------------+---------+
+(product_id, start_date, end_date) is the primary key (combination of columns with unique values) for this table.
+Each row of this table indicates the price of the product_id in the period from start_date to end_date.
+For each product_id there will be no two overlapping periods. That means there will be no two intersecting periods for the same product_id.
+ 
+Table: UnitsSold
+
++---------------+---------+
+| Column Name   | Type    |
++---------------+---------+
+| product_id    | int     |
+| purchase_date | date    |
+| units         | int     |
++---------------+---------+
+This table may contain duplicate rows.
+Each row of this table indicates the date, units, and product_id of each product sold. 
+ 
+Write a solution to find the average selling price for each product. average_price should be rounded to 2 decimal places.Return the result table in any order.
+
+Solution:
+Select p.product_id, ifnull(round(sum(price*units)/sum(units) ,2),0) as average_price
+from Prices p
+left join UnitsSold us
+on p.product_id = us.product_id
+where us.purchase_date BETWEEN p.start_date AND p.end_date or us.purchase_date is null 
+group by p.product_id
+
+****************************************************************************
+Question 17: Table: Project
+
++-------------+---------+
+| Column Name | Type    |
++-------------+---------+
+| project_id  | int     |
+| employee_id | int     |
++-------------+---------+
+(project_id, employee_id) is the primary key of this table.
+employee_id is a foreign key to Employee table.
+Each row of this table indicates that the employee with employee_id is working on the project with project_id.
+ 
+Table: Employee
+
++------------------+---------+
+| Column Name      | Type    |
++------------------+---------+
+| employee_id      | int     |
+| name             | varchar |
+| experience_years | int     |
++------------------+---------+
+employee_id is the primary key of this table. It's guaranteed that experience_years is not NULL.
+Each row of this table contains information about one employee.
+ 
+Write an SQL query that reports the average experience years of all the employees for each project, rounded to 2 digits.Return the result table in any order.
+
+Solution:
+select project_id, round(avg(experience_years),2) as average_years
+from Project p
+join Employee ex
+on p.employee_id = ex.employee_id
+group by p.project_id
+
+****************************************************************************
+Question 18: Table: Users
+
++-------------+---------+
+| Column Name | Type    |
++-------------+---------+
+| user_id     | int     |
+| user_name   | varchar |
++-------------+---------+
+user_id is the primary key (column with unique values) for this table.
+Each row of this table contains the name and the id of a user.
+ 
+Table: Register
+
++-------------+---------+
+| Column Name | Type    |
++-------------+---------+
+| contest_id  | int     |
+| user_id     | int     |
++-------------+---------+
+(contest_id, user_id) is the primary key (combination of columns with unique values) for this table.
+Each row of this table contains the id of a user and the contest they registered into.
+ 
+Write a solution to find the percentage of the users registered in each contest rounded to two decimals.Return the result table ordered by percentage in descending order. 
+In case of a tie, order it by contest_id in ascending order.
+
+Solution:
+select contest_id, round(count(u.user_id)/totalusers.user_count * 100,2) as percentage
+from Users u
+inner join Register r on u.user_id = r.user_id
+cross join (select count(*) as user_count
+            from users) as totalusers
+group by r.contest_id
+order by percentage desc, contest_id asc
+
+************************************************************************
+Question 19: Table: Queries
+
++-------------+---------+
+| Column Name | Type    |
++-------------+---------+
+| query_name  | varchar |
+| result      | varchar |
+| position    | int     |
+| rating      | int     |
++-------------+---------+
+This table may have duplicate rows.
+This table contains information collected from some queries on a database.
+The position column has a value from 1 to 500.
+The rating column has a value from 1 to 5. Query with rating less than 3 is a poor query.
+ 
+We define query quality as:The average of the ratio between query rating and its position.We also define poor query percentage as:The percentage of all queries with rating less than 3.
+
+Write a solution to find each query_name, the quality and poor_query_percentage.Both quality and poor_query_percentage should be rounded to 2 decimal places.Return the result table in any order.
+
+Solution:
+SELECT query_name,
+    ROUND(
+        AVG(CAST(rating AS decimal) / position), 2
+    ) AS quality,
+    ROUND(
+        SUM(
+            CASE WHEN rating < 3
+            THEN 1
+            ELSE 0
+            END
+        ) * 100 / COUNT(*), 2
+    ) AS poor_query_percentage
+FROM queries
+WHERE query_name IS NOT NULL
+GROUP BY query_name;
+
+***************************************************************************
+Question 20: Table: Transactions
+
++---------------+---------+
+| Column Name   | Type    |
++---------------+---------+
+| id            | int     |
+| country       | varchar |
+| state         | enum    |
+| amount        | int     |
+| trans_date    | date    |
++---------------+---------+
+id is the primary key of this table.
+The table has information about incoming transactions.
+The state column is an enum of type ["approved", "declined"].
+ 
+Write an SQL query to find for each month and country, the number of transactions and their total amount, the number of approved transactions and their total amount.Return the result table in any order.
+
+Solution:
+SELECT 
+    DATE_FORMAT(trans_date, '%Y-%m') AS month
+    , country
+    , COUNT(*) AS trans_count
+    , SUM(IF(state = 'approved', 1, 0)) AS approved_count
+    , SUM(amount) AS trans_total_amount
+    , SUM(IF(state = 'approved', amount, 0)) AS approved_total_amount
+FROM Transactions
+GROUP BY month, country
+
+******************************************************************************
+Question 21: Table: Delivery
+
++-----------------------------+---------+
+| Column Name                 | Type    |
++-----------------------------+---------+
+| delivery_id                 | int     |
+| customer_id                 | int     |
+| order_date                  | date    |
+| customer_pref_delivery_date | date    |
++-----------------------------+---------+
+delivery_id is the column of unique values of this table.
+The table holds information about food delivery to customers that make orders at some date and specify a preferred delivery date (on the same order date or after it).
+ 
+If the customer's preferred delivery date is the same as the order date, then the order is called immediate; otherwise, it is called scheduled.The first order of a customer is the order 
+with the earliest order date that the customer made. It is guaranteed that a customer has precisely one first order.
+
+Write a solution to find the percentage of immediate orders in the first orders of all customers, rounded to 2 decimal places.
+
+Solution:
+Select round(avg(order_date = customer_pref_delivery_date)*100, 2) as immediate_percentage
+from Delivery
+where (customer_id, order_date) IN (Select customer_id, min(order_date)
+from Delivery
+group by customer_id) 
+
+********************************************************************************* 
+Question 22: Table: Teacher
+
++-------------+------+
+| Column Name | Type |
++-------------+------+
+| teacher_id  | int  |
+| subject_id  | int  |
+| dept_id     | int  |
++-------------+------+
+(subject_id, dept_id) is the primary key (combinations of columns with unique values) of this table.
+Each row in this table indicates that the teacher with teacher_id teaches the subject subject_id in the department dept_id.
+ 
+Write a solution to calculate the number of unique subjects each teacher teaches in the university.Return the result table in any order.
+
+Solution : select teacher_id, count(distinct subject_id) as cnt
+from Teacher
+group by teacher_id
+
+*********************************************************************************
+Question 23: Table: Customer
+
++-------------+---------+
+| Column Name | Type    |
++-------------+---------+
+| customer_id | int     |
+| product_key | int     |
++-------------+---------+
+This table may contain duplicates rows. 
+customer_id is not NULL.
+product_key is a foreign key (reference column) to Product table.
+ 
+Table: Product
+
++-------------+---------+
+| Column Name | Type    |
++-------------+---------+
+| product_key | int     |
++-------------+---------+
+product_key is the primary key (column with unique values) for this table.
+ 
+Write a solution to report the customer ids from the Customer table that bought all the products in the Product table.Return the result table in any order.
+
+Solution : 
+select c.customer_id
+from Customer c
+inner join product p
+on c.product_key = p.product_key
+group by c.customer_id
+having count(distinct c.product_key ) = (select count(product_key ) from product) 
