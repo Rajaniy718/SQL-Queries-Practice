@@ -1,0 +1,131 @@
+/**********************************************************************/
+/* Credit to Schema : https://github.com/AndrejPHP/w3schools-database */
+/**********************************************************************/
+/* Run GenerateMoviesDatabase.sql to set up database, tables and data*/
+
+/*
+----Schema----
+Film
+Director
+Country
+Certificate
+Genre
+Language
+Studio
+Cast
+Actor
+*/
+
+/**********************************************************************/
+/* SQL Queries */
+/**********************************************************************/
+
+--1. Select director name together with each film the director made*/
+
+select DirectorName, [dbo].[tblFilm].FilmName
+from [dbo].[tblDirector]
+join [dbo].[tblFilm]
+on [dbo].[tblDirector].DirectorID = [dbo].[tblFilm].FilmDirectorID;
+
+/*2. Select Film id together with name of director who made the film*/
+
+select [dbo].[tblFilm].FilmID , [dbo].[tblDirector].DirectorName
+from [dbo].[tblFilm]
+join [dbo].[tblDirector]
+on [dbo].[tblDirector].DirectorID = [dbo].[tblFilm].FilmDirectorID
+order by [dbo].[tblFilm].FilmID;
+
+/*3. Select director who did not win any oscar yet for all the films he/she made*/
+
+select [dbo].[tblDirector].DirectorName,count(FilmOscarWins) as Total_oscar_wins, FilmName
+from [dbo].[tblFilm]
+left join [dbo].[tblDirector]
+on [dbo].[tblDirector].DirectorID = [dbo].[tblFilm].FilmDirectorID
+group by DirectorName, FilmOscarWins, FilmName
+having count(FilmOscarWins) = 0
+
+/*4. Select Certificate together with the name of Directors*/
+
+select distinct([dbo].[tblDirector].DirectorName), tblCertificate.Certificate 
+from [dbo].[tblFilm]
+join [dbo].[tblCertificate]
+on [dbo].[tblCertificate].CertificateID = [dbo].[tblFilm].FilmCertificateID
+join [dbo].[tblDirector]
+on [dbo].[tblDirector].DirectorID = [dbo].[tblFilm].FilmDirectorID
+group by tblCertificate.Certificate, [dbo].[tblDirector].DirectorName
+order by [dbo].[tblDirector].DirectorName 
+
+/*4a. Select Director together with the No certificate value*/
+
+select [dbo].[tblDirector].DirectorName, tblCertificate.Certificate,  tblCertificate.CertificateID
+from [dbo].[tblFilm]
+left join [dbo].[tblCertificate]
+on [dbo].[tblCertificate].CertificateID = [dbo].[tblFilm].FilmCertificateID
+join [dbo].[tblDirector]
+on [dbo].[tblDirector].DirectorID = [dbo].[tblFilm].FilmDirectorID
+where tblCertificate.Certificate IS NULL
+group by  [dbo].[tblDirector].DirectorName, tblCertificate.CertificateID, tblCertificate.Certificate
+order by [dbo].[tblDirector].DirectorName 
+
+/*5. Select Films that does not make any box office and No value for Film budget*/
+
+select [dbo].[tblFilm].FilmName , FilmBoxOfficeDollars ,FilmBudgetDollars
+from [dbo].[tblFilm]
+where FilmBoxOfficeDollars IS NULL AND FilmBudgetDollars IS NOT NULL
+order by [dbo].[tblFilm].FilmName
+
+/*5a. Select Films that does not make any box office*/
+
+select [dbo].[tblFilm].FilmName , FilmBoxOfficeDollars ,FilmBudgetDollars
+from [dbo].[tblFilm]
+where FilmBoxOfficeDollars IS NULL
+order by [dbo].[tblFilm].FilmName
+**********************************************
+/*6. Select the most expensive product*/
+SELECT ProductID,ProductName,Price
+FROM products
+ORDER BY Price DESC
+LIMIT 1;
+
+/*7. Select the second most expensive product*/
+/*version 1*/
+SELECT ProductID,ProductName,Price
+FROM products
+ORDER BY Price DESC
+LIMIT 1 OFFSET 1;
+
+/*version 2 (complex)*/
+WITH
+	tbl1 AS (SELECT ProductID,ProductName,Price
+		FROM products
+		ORDER BY Price DESC
+		LIMIT 2),
+	tbl2 AS (SELECT ProductID,ProductName,Price
+		FROM products
+		ORDER BY Price DESC
+		LIMIT 1)
+        
+SELECT tbl1.ProductID,tbl1.ProductName,tbl1.Price
+FROM tbl1
+LEFT JOIN tbl2 ON tbl1.ProductID = tbl2.ProductID
+WHERE tbl2.ProductID IS NULL;
+
+
+/*3. Select name and price of each product, sort the result by price in decreasing order*/
+SELECT ProductID,ProductName,Price
+FROM products
+ORDER BY Price DESC;
+
+/*4. Select 5 most expensive products*/
+SELECT ProductID,ProductName,Price
+FROM products
+ORDER BY Price DESC
+LIMIT 5;
+
+/*5. Select 5 most expensive products without the most expensive (in final 4 products)*/
+SELECT ProductID,ProductName,Price
+FROM products
+ORDER BY Price DESC
+LIMIT 4 OFFSET 1;
+
+*****************************
