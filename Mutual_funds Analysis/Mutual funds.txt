@@ -1,4 +1,6 @@
-Here's a brief explanation of some of the key variables:
+# Mutual Funds Case Study analysis
+
+## Here's a brief explanation of some of the key variables:
 
 - Scheme Name: The name of the mutual fund scheme.
 - Min SIP: The minimum investment amount required for a Systematic Investment Plan.
